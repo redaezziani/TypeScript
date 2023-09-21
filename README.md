@@ -50,3 +50,19 @@ in this repo i show you the power of typescript and javascript and how you can u
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> 
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/>
 </div>
+<br>
+<div display="flex" align-items="center" justify-content="center">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/npm/npm-original-wordmark.svg" alt="npm" width="40" height="40"/>
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/yarn/yarn-original-wordmark.svg" alt="yarn" width="40" height="40"/>
+</div>
+<br>
+<div display="flex" align-items="center" justify-content="center">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/visualstudio/visualstudio-plain.svg" alt="vscode" width="40" height="40"/>
+</div>
+<br>
+## Author
+
+👤 **Reda ezzinai || Klaus **
+
+* Website: 
+* Dribbble: [@Reda ezzinai](https://dribbble.com/KlausDev)

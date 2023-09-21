@@ -14,12 +14,6 @@ type VideoFormat = videoFormat & {
   hasAudio: boolean;
 };
 
-// Define a function to sanitize the filename
-
-
-
-
-
 function setSanitizeFilename(filename: string): string {
   return filename.replace(/[\\/:"*?<>|]+/g, '_');
 }
