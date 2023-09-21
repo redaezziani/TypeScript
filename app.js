@@ -5,12 +5,22 @@ import fs from 'fs';
 import * as p from '@clack/prompts';
 import cp from 'child_process';
 import ffmpegPath from 'ffmpeg-static';
+import path from 'path';
+import os from 'os';
 
 
 function setSanitizeFilename(filename) {
-    // Replace invalid characters with underscores
     return filename.replace(/[\\/:"*?<>|]+/g, '_');
 }
+
+function getMainDownloadFolder() {
+    const mainDownloadFolder = path.join(os.homedir(), 'Downloads');
+    return mainDownloadFolder;
+}
+
+
+
+
 
 async function downloadVideo(url, name, resolution, permission) {
   if (permission) {
@@ -50,7 +60,11 @@ async function downloadVideo(url, name, resolution, permission) {
         // Delete the video and audio files
         fs.unlinkSync(videoFilePath);
         fs.unlinkSync(audioFilePath);
-        
+        // Get the main download folder and move the video
+        const mainDownloadFolder = getMainDownloadFolder();
+        const finalOutputFilePath = path.join(mainDownloadFolder, `${sanitizedFilename}.mp4`);
+        fs.renameSync(outputFilePath, finalOutputFilePath);
+
     } catch (err) {
       console.error('Error:', err.message);
     }
@@ -58,7 +72,6 @@ async function downloadVideo(url, name, resolution, permission) {
     console.error('Permission denied to download the video.');
   }
 }
-
 function getFormatCode(formats, resolution) {
   switch (resolution) {
     case '1080p':
@@ -94,7 +107,73 @@ async function mergeAudioAndVideo(videoPath, audioPath, outputPath) {
     });
   });
 }
+//lets make a function to download a playlist
+async function downloadPlaylist(playlistUrl, permission) {
+  if (permission) {
+    try {
+      // Get the playlist info
+      const playlistInfo = await ytdl.getPlaylist(playlistUrl);
+      const mainDownloadFolder = getMainDownloadFolder();
 
+      for (const videoInfo of playlistInfo) {
+        const url = videoInfo.url;
+        const name = videoInfo.title;
+        const resolution = '1080p'; // You can customize this if needed
+
+        console.log(chalk.green(`Downloading video: ${name}`));
+
+        const sanitizedFilename = setSanitizeFilename(name);
+        const videoFilePath = `./videos/${sanitizedFilename}_video.mp4`;
+        const audioFilePath = `./videos/${sanitizedFilename}_audio.mp3`;
+        const outputFilePath = `./videos/${sanitizedFilename}.mp4`;
+
+        const videoStream = fs.createWriteStream(videoFilePath);
+        const audioStream = fs.createWriteStream(audioFilePath);
+
+        const formatCode = getFormatCode(videoInfo.formats, resolution);
+        if (!formatCode) {
+          console.error('Could not find a suitable format for download.');
+          continue; // Skip this video and move to the next
+        }
+
+        const video = ytdl(url, { quality: formatCode });
+        const audio = ytdl(url, { quality: 'highestaudio' });
+
+        // Use Promise.all to download both audio and video concurrently
+        await Promise.all([
+          new Promise((resolve, reject) => {
+            video.pipe(videoStream);
+            videoStream.on('finish', resolve);
+            videoStream.on('error', reject);
+          }),
+          new Promise((resolve, reject) => {
+            audio.pipe(audioStream);
+            audioStream.on('finish', resolve);
+            audioStream.on('error', reject);
+          }),
+        ]);
+
+        await mergeAudioAndVideo(videoFilePath, audioFilePath, outputFilePath);
+
+        // Delete the video and audio files
+        fs.unlinkSync(videoFilePath);
+        fs.unlinkSync(audioFilePath);
+
+        // Move the video to the main download folder
+        const finalOutputFilePath = path.join(mainDownloadFolder, `${sanitizedFilename}.mp4`);
+        fs.renameSync(outputFilePath, finalOutputFilePath);
+
+        console.log(chalk.green(`Downloaded video: ${name}`));
+      }
+
+      console.log(chalk.green('Playlist download completed.'));
+    } catch (err) {
+      console.error('Error:', err.message);
+    }
+  } else {
+    console.error('Permission denied to download the playlist.');
+  }
+}
 const menuChoices = [
   {
     name: 'Download Video',
@@ -165,10 +244,30 @@ async function displayMenu() {
       console.log('Done....');
       break;
 
-    case 'playlist':
-      console.log(chalk.green('Playing playlist...'));
-      break;
-
+      case 'playlist':
+        const { playlistUrl } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'playlistUrl',
+            message: 'Enter the URL of the playlist you want to download:',
+          },
+        ]);
+  
+        const { permission: playlistPermission } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'permission',
+            message: 'Do you want to download the playlist in the main download folder on your computer?',
+          },
+        ]);
+  
+        console.log(chalk.overline('\nDownloading playlist is starting...'));
+        const playlistSpinner = p.spinner();
+        playlistSpinner.start();
+        await downloadPlaylist(playlistUrl, playlistPermission);
+        playlistSpinner.stop();
+        console.log('Done....');
+        break;
     case 'exit':
       console.log(chalk.yellow('Exiting...'));
       break;

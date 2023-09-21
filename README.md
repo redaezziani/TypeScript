@@ -39,4 +39,4 @@ npm i ffmpeg-static
 ```sh
 node app.js
 ```
-<img src='./assets/Screenshot 2023-09-21 193039.jpg' alt='Screenshot 2023-09-21 193039.jpg' />
+<img src='./assets/Screenshot 2023-09-21 193039.jpg' alt='Screenshot 2023-09-21 193039.jpg'  />
