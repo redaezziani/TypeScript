@@ -6,20 +6,35 @@ import ytdl from 'ytdl-core';
 import fs from 'fs';
 import * as p from '@clack/prompts';
 
-
 async function downloadVideo(url, name, permission) {
-  if (permission) {
-    const info = await ytdl.getInfo(url);
-    const format = ytdl.formatChooser(info.formats,{ quality: '134' });
-    if (format) {
-      ytdl(url, { format }).pipe(fs.createWriteStream(`${name}.mp4`));
+    if (permission) {
+      try {
+        const info = await ytdl.getInfo(url);
+        const format = ytdl.chooseFormat(info.formats, { quality: 'highestvideo' });
+        
+        if (!format) {
+          throw new Error('Could not find a suitable format for download.');
+        }
+  
+        const video = ytdl(url, { format });
+        const outputFilePath = `./videos/${name}.mp4`;
+  
+        video.pipe(fs.createWriteStream(outputFilePath));
+        
+        video.on('end', () => {
+          console.log(`Video downloaded successfully to ${outputFilePath}`);
+        });
+  
+        video.on('error', (err) => {
+          console.error('Error downloading video:', err);
+        });
+      } catch (err) {
+        console.error('Error getting video info:', err);
+      }
     } else {
-      console.log('The resolution you entered is not available or there was an issue with the format.');
+      console.error('Permission denied to download the video.');
     }
   }
-}
-
-
 const menuChoices = [
   {
     name: 'Download Video',
@@ -73,8 +88,7 @@ async function displayMenu() {
           choices:['1080p','720p','480p']
         }
       ])
-      //lets make a bolean to ask the user give the permission to download the video in the main download folder in his computer
-      const {permission}=await inquirer.prompt([
+      const {permission} =await inquirer.prompt([
         {
           type:'confirm',
           name:'permission',
@@ -82,7 +96,6 @@ async function displayMenu() {
         }
       ])
       console.log(chalk.overline('\n downloading is starting...'));
-      //lets add a progress bar to show the progress of the downloading
       const spiner=p.spinner();
       spiner.start();
       await downloadVideo(url, name, resolution, permission)
@@ -102,7 +115,4 @@ async function displayMenu() {
 
 displayMenu();
 
-
-
-//lets make a function to safe the video in a folder
 
