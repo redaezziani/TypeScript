@@ -29,9 +29,13 @@ npm i @clack/prompts
 npm i child_process
 </li>
 <li>
-ffmpeg-static
+npm i ffmpeg-static
 </li>
 </ul>
 
 </div>
 ## Usage
+
+```sh
+node app.js
+```
