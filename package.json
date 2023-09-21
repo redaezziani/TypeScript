@@ -1,1 +1,35 @@
-{"type":"module","name":"ts","version":"1.0.0","description":"","main":"index.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"repository":{"type":"git","url":"git+https://github.com/redaezziani/TypeScript.git"},"keywords":[],"author":"","license":"ISC","bugs":{"url":"https://github.com/redaezziani/TypeScript/issues"},"homepage":"https://github.com/redaezziani/TypeScript#readme","devDependencies":{"typescript":"^5.2.2"},"dependencies":{"express":"^4.18.2"}}
+{
+  "type": "module",
+  "name": "ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon --exec  app.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redaezziani/TypeScript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/redaezziani/TypeScript/issues"
+  },
+  "homepage": "https://github.com/redaezziani/TypeScript#readme",
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "express": "^4.18.2",
+    "inquirer": "^9.2.11",
+    "ytdl-core": "^4.11.5"
+  }
+}
