@@ -67,7 +67,6 @@ const downloadMediaFromList = async (list) => {
             res.body.pipe(file)
             file.on("finish", () => {
                 file.close()
-                resolve()
             });
             file.on("error", (err) => reject(err));
         });
