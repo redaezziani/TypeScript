@@ -7,8 +7,7 @@ import cp from 'child_process';
 import ffmpegPath from 'ffmpeg-static';
 import path from 'path';
 import os from 'os';
-
-
+import DownloadTikTok from './tikTok.js';
 function setSanitizeFilename(filename) {
     return filename.replace(/[\\/:"*?<>|]+/g, '_');
 }
@@ -184,6 +183,11 @@ const menuChoices = [
     value: 'playlist',
   },
   {
+    name: 'Download TikTok',
+    value: 'tiktok',
+  }
+  ,
+  {
     name: 'Exit',
     value: 'exit',
   },
@@ -268,6 +272,9 @@ async function displayMenu() {
         playlistSpinner.stop();
         console.log('Done....');
         break;
+    case 'tiktok':
+      DownloadTikTok();
+      break;
     case 'exit':
       console.log(chalk.yellow('Exiting...'));
       break;
